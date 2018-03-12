@@ -1,0 +1,499 @@
+<div class="container" ng-controller="heatctrl">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2">
+    <h2>Build Heat Template for Apprenda 6.5.* on Openstack</h2>
+    </div>
+    <div class="col-lg-2">
+      <h4 class="pull-right"><a href="/install">Back to Topology</a></h4>
+    </div>
+  </div>
+  <div>
+    <div class="row">
+      <div class="row">
+        <div class="col-lg-2 col-lg-offset-2">
+          <h3>Configuration Settings</h3>
+        </div>
+        <div class="col-lg-1">
+          <button class="btn btn-sm btn-default" style="margin-top: 10px" ng-click="setdefaults()">Defaults</span></button>
+        </div>
+      </div>
+      <div class="col-lg-12">
+    <form name="newnode" ng-submit="buildHeat()" novalidate>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('envObj'), 'section-empty': !isObjValid('envObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Configure your Openstack account.</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#env">Openstack Account</div>
+              </div>
+            </div>
+          </div>
+          <div id="env" class="collapse auth-block">
+            <h3>Openstack Account</h3>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Openstack URL</label>
+                  <input class="form-control input-url" type="text" ng-model="envObj.url" ng-change="checkEnv()" required>
+                </div>
+                <div class="form-group">
+                  <label>Tenant ID:</label>
+                  <input class="form-control" type="text" ng-model="envObj.tid" required>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label>User ID</label>
+                        <input class="form-control" type="text" ng-model="envObj.uname" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Password</label>
+                      <input class="form-control" type="password" ng-model="envObj.upass" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <p>Keystone API version</p>
+                <select class="form-control" ng-model="envObj.authapi" ng-options="i for i in envmeta.authapis" required></select>
+              </div>
+              <div class="col-lg-6">
+                <p>Compute API version</p>
+                <select class="form-control" ng-model="envObj.compapi" ng-options="i for i in envmeta.compapis" required></select>
+              </div>
+              <div class="col-lg-6">
+                <p>Network API version</p>
+                <select class="form-control" ng-model="envObj.netapi" ng-options="i for i in envmeta.netapis" required></select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('domainObj'), 'section-empty': !isObjValid('domainObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Apprenda nodes must be attached to a Windows domain or domain forest.</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#domain">AD Domain</div>
+              </div>
+            </div>
+          </div>
+          <div id="domain" class="collapse auth-block">
+            <h3>Domain Info</h3>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Domain Name<input class="form-control" type="text" ng-model="domainObj.name" required></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain suffix<input class="form-control" type="text" ng-model="domainObj.suf" required></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain Controller IP<input class="form-control" type="text" ng-model="domainObj.dcip"></label>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Admin<input class="form-control" type="text" ng-model="domainObj.admin" required></label>
+                </div>
+                <div class="form-group">
+                  <label>Admin password<input class="form-control" type="password" ng-model="domainObj.pass" required></label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class=" server-block">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Domain Server Name<input class="form-control" type="text" ng-model="dcObj.name" required></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Security Group</label>
+                    <input class="form-control" ng-model="dcObj.secgroup" type="text" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Server Key<input class="form-control" type="text" ng-model="dcObj.key" required></label>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Image</label>
+                    <input class="form-control" ng-model="dcObj.imageid" type="text" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Flavor</label>
+                    <input class="form-control" ng-model="dcObj.flavorid" type="text" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Network</label>
+                    <input class="form-control" ng-model="dcObj.networkid" type="text" required>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+      <div class="col-lg-8 col-lg-offset-2">
+        <div class="section-header">
+          <div class="row">
+            <div class="col-lg-1">
+              <span ng-class="{'section-done': isObjValid('platformObj'), 'section-empty': !isObjValid('platformObj')}" class="glyphicon glyphicon-check"></span>
+            </div>
+            <div class="col-lg-9">
+              <p>The platform configuration section. The platform will consist of 1 Apprenda Cloud with the name <b>PrivatePaaS</b></p>
+            </div>
+            <div class="col-lg-2">
+              <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#platform">Platform Info</div>
+            </div>
+          </div>
+        </div>
+        <div id="platform" class="collapse auth-block">
+            <h3>Platform Info</h3>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Platform Admin Service<input class="form-control" type="text" ng-model="platformObj.admin"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Admin Password<input class="form-control" type="password" ng-model="platformObj.adminpass"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform System Service<input class="form-control" type="text" ng-model="platformObj.sys"></label>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Platform Base Url<input class="form-control" type="text" ng-model="platformObj.url"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Repo IP<input class="form-control" type="text" ng-model="platformObj.repo"></label>
+                </div>
+                <div class="form-group">
+                  <label>License File<input class="form-control" type="text" ng-model="platformObj.lic"></label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <h4>Admin user</h4>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Admin email<input class="form-control" type="email" ng-model="adminObj.email"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Admin Password<input class="form-control" type="password" ng-model="adminObj.pass" required></label>
+                </div>
+                <div class="form-group">
+                  <label>First Name<input class="form-control" type="text" ng-model="adminObj.fname"></label>
+                </div>
+                <div class="form-group">
+                  <label>Last Name<input class="form-control" type="text" ng-model="adminObj.lname"></label>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Company Name<input class="form-control" type="text" ng-model="adminObj.compname"></label>
+                </div>
+                <div class="form-group">
+                  <label>Company Alias<input class="form-control" type="text" ng-model="adminObj.compalias"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('serverObj'), 'section-empty': !isObjValid('serverObj')}"  class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Installation Server</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#seed">Installation server</div>
+              </div>
+            </div>
+          </div>
+          <div id="seed" class="collapse auth-block">
+            <h3>Installation server. This server will start the installer for the platform or the autoscaler</h3>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Server Name<input class="form-control" type="text" ng-model="serverObj.name"></label>
+                </div>
+                <div class="form-group">
+                  <label>Security Group</label>
+                  <input class="form-control" ng-model="serverObj.secgroup" type="text">
+                </div>
+                <div class="form-group">
+                  <label>Server Key<input class="form-control" type="text" ng-model="serverObj.key"></label>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Image</label>
+                  <input class="form-control" ng-model="serverObj.imageid" type="text">
+                </div>
+                <div class="form-group">
+                  <label>Flavor</label>
+                  <input class="form-control" ng-model="serverObj.flavorid" type="text">
+                </div>
+                <div class="form-group">
+                  <label>Network</label>
+                  <input class="form-control" ng-model="serverObj.networkid" type="text" >
+                </div>
+                <div class="form-group">
+                  <label>External IP</label>
+                  <input class="form-control" ng-model="serverObj.externalIP" type="text">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('lmObj'), 'section-empty': !isObjValid('lmObj')}"  class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Core Components. Load manager configuration</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#lm">Load Manager</div>
+              </div>
+            </div>
+          </div>
+          <div id="lm" class="collapse auth-block">
+          <h3>Load Manager</h3>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="lmObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <input class="form-control" ng-model="lmObj.secgroup" type="text">
+              </div>
+              <div class="form-group">
+                <label>Server Key<input class="form-control" type="text" ng-model="lmObj.key"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Image</label>
+                <input class="form-control" ng-model="lmObj.imageid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <input class="form-control" ng-model="lmObj.flavorid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <input class="form-control" ng-model="lmObj.networkid" type="text" >
+              </div>
+              <div class="form-group">
+                <label>External IP</label>
+                <input class="form-control" ng-model="lmObj.externalIP" type="text">
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('sqlObj'), 'section-empty': !isObjValid('sqlObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Core Components. SQL Server configuration</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#sql">SQL Server</div>
+              </div>
+            </div>
+          </div>
+          <div id="sql" class="collapse auth-block">
+          <h3>SQL Node</h3>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="sqlObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <input class="form-control" ng-model="sqlObj.secgroup" type="text">
+              </div>
+              <div class="form-group">
+                <label>Server Key<input class="form-control" type="text" ng-model="sqlObj.key"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Image</label>
+                <input class="form-control" ng-model="sqlObj.imageid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <input class="form-control" ng-model="sqlObj.flavorid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <input class="form-control" ng-model="sqlObj.networkid" type="text">
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('winObj'), 'section-empty': !isObjValid('winObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Resource Pool Components. Windows Server configuration</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#win">Windows</div>
+              </div>
+            </div>
+          </div>
+          <div id="win" class="collapse auth-block">
+          <h3>Windows Node</h3>
+          <div class="form-group">
+            <label>How many?</label>
+            <input class="form-control" ng-model="winnum" type="number" min="3" tip text="Min of 3 servers are required">
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="winObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <input class="form-control" ng-model="winObj.secgroup" type="text">
+              </div>
+              <div class="form-group">
+                <label>Server Key<input class="form-control" type="text" ng-model="winObj.key"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Image</label>
+                <input class="form-control" ng-model="winObj.imageid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <input class="form-control" ng-model="winObj.flavorid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <input class="form-control" ng-model="winObj.networkid" type="text">
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-class="{'section-done': isObjValid('linObj'), 'section-empty': !isObjValid('linObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9">
+                <p>Resource Pool Components. Linux Server configuration</p>
+              </div>
+              <div class="col-lg-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#lin">Linux</div>
+              </div>
+            </div>
+          </div>
+          <div id="lin" class="collapse auth-block">
+          <h3>Linux Node</h3>
+          <div class="form-group">
+            <label>How many?</label>
+            <input class="form-control" ng-model="linnum" type="number">
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="linObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <input class="form-control" ng-model="linObj.secgroup" type="text">
+              </div>
+              <div class="form-group">
+                <label>Server Key<input class="form-control" type="text" ng-model="linObj.key"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Image</label>
+                <input class="form-control" ng-model="linObj.imageid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <input class="form-control" ng-model="linObj.flavorid" type="text">
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <input class="form-control" ng-model="linObj.networkid" type="text">
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 10px">
+        <div class="col-lg-4 col-lg-offset-2">
+          <div class="form-group" ng-if="envmeta.emailsetup">
+            <label>Notify me when the infrastructure is built<input class="form-control" type="email" ng-model="temp.notifyemail" placeholder="myemail@mycomp.com"></label>
+          </div>
+        </div>
+        <div class="col-lg-3">
+        </div>
+        <div class="col-lg-2">
+          <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="newnode.$invalid">Build</button></p>
+        </div>
+      </div>
+    </form>
+      </div>
+    </div>
+  </div>
+  <div id="template" ng-if="!!template.str">
+    <h3>Template</h3> <p>If you are creating the instance in Horizon, paste this into the User Data tab of the New Instance Wizard</p>
+    <textarea style="margin: auto;width: 90%" ng-model="template.str" rows="20"></textarea>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+{
+  "name": "appdeployer",
+  "version": "0.0.1",
+  "description": "Apprenda Deployer",
+  "author": {
+    "name": "Sasha Jeltuhin",
+    "email": "sjeltuhin@apprenda.com"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "body-parser": "^1.5.2",
+    "cliff": "^0.1.10",
+    "commander": "^2.8.1",
+    "config": "^1.15.0",
+    "cookie-parser": "^1.3.3",
+    "dateformat": "^1.0.11",
+    "errorhandler": "^1.1.1",
+    "express": "^4.8.0",
+    "express-session": "^1.7.2",
+    "fs-extra": "0.30.0",
+    "jade": "^1.5.0",
+    "method-override": "^2.1.2",
+    "moment": "^2.13.0",
+    "mongodb": "1.4.30",
+    "morgan": "^1.2.2",
+    "mssql": "^2.1.6",
+    "multer": "^1.2.0",
+    "nodemailer": "^1.11.0",
+    "nodemailer-smtp-transport": "^2.0.0",
+    "passport": "^0.3.0",
+    "prompt": "^0.2.14",
+    "redis": "^0.12.1",
+    "request": "^2.60.0",
+    "socket.io": "^1.4.5",
+    "xml2js": "^0.4.16",
+    "multer": "1.2.0"
+  },
+  "scripts": {
+    "test": "karma start test/karma.conf.js"
+  },
+  "devDependencies": {
+    "jasmine-core": "2.4.1",
+    "karma": "0.13.22",
+    "karma-jasmine": "1.0.2"
+  }
+}

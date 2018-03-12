@@ -1,0 +1,426 @@
+<div class="container" ng-controller="scalectrl">
+  <div class="row">
+    <div class="col-lg-6">
+      <ul class="nav navbar-nav">
+        <li><a href="/scale">Dashboard <span class="glyphicon glyphicon-dashboard"></span></a></li>
+        <li><a href="" ng-click="signout()">Sign Out <span class="glyphicon glyphicon-log-out"></span></a></li>
+      </ul>
+    </div>
+    <!--<div class="col-lg-1 col-lg-offset-3 ">-->
+      <!--<a href="/scale" class="btn btn-sm btn-info">Dashboard <span class="glyphicon glyphicon-dashboard"></span></a>-->
+    <!--</div>-->
+    <!--<div class="col-lg-1">-->
+      <!--<p><button ng-click="signout()" class="btn btn-sm btn-warning">Sign Out <span class="glyphicon glyphicon-log-out"></span></button></p>-->
+    <!--</div>-->
+  </div>
+  <div>
+    <div class="row">
+      <div class="col-lg-10 col-lg-offset-1">
+        <div class="{{errclass}}" role="alert">{{errormsg}}</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="row">
+            <div class="row">
+              <div class="col-lg-6">
+                <h2>Autoscaler Settings for Apprenda 6.5.*</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <button ng-click="newEnv()" class="btn btn-sm btn-success">New IaaS Tenant... <span class="glyphicon glyphicon-new-window"></span></button>
+                <p>Configure environments where Apprenda instance is installed</p>
+                <div ng-show="shownewenv">
+                  <form name="frmnewenv" ng-submit="addEnv()" novalidate>
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label>IaaS Type</label>
+                              <select class="form-control" ng-model="tempEnv.iaas" ng-options="i.id as i.name for i in iaastypes" required></select>
+                            </div>
+                            <div class="form-group">
+                              <label>IaaS URL</label>
+                              <input class="form-control input-url" type="text" ng-model="tempEnv.url" ng-blur="urlChanged()" required>
+                            </div>
+                            <div class="form-group">
+                              <label>IaaS Tenant ID</label>
+                              <input class="form-control" type="text" ng-model="tempEnv.tid" required>
+                            </div>
+                            <div class="form-group">
+                              <label>Keystone API version</label>
+                              <select class="form-control" ng-model="tempEnv.authapi" ng-options="i for i in tempEnv.authapis" required></select>
+                            </div>
+                            <div class="form-group">
+                              <label>Compute API version</label>
+                              <select class="form-control" ng-model="tempEnv.compapi" ng-options="i for i in tempEnv.compapis" required></select>
+                            </div>
+                            <div class="form-group">
+                              <label>Network API version</label>
+                              <select class="form-control" ng-model="tempEnv.netapi" ng-options="i for i in tempEnv.netapis" required></select>
+                            </div>
+                          </div>
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label>Apprenda Cloud</label>
+                              <input class="form-control" type="text" ng-model="tempEnv.appcloud" required>
+                            </div>
+                            <div class="form-group">
+                              <label>IaaS User ID</label>
+                              <input class="form-control" type="text" ng-model="tempEnv.uname" required>
+                            </div>
+                            <div class="form-group">
+                              <label>Iaas User Password</label>
+                              <input class="form-control" type="password" ng-model="tempEnv.upass" required>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-lg-1 col-lg-offset-11">
+                            <p><button type="submit" class="btn btn-sm btn-success" ng-disabled="frmnewenv.$invalid">Add <span class="glyphicon glyphicon-log-in"></span></button></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <form name="frmconnect" ng-submit="saveModel()" novalidate>
+            <div class="row">
+              <div class="col-lg-12">
+                <h3>IaaS Environments</h3>
+                <div class="row section-env" ng-repeat="e in envs">
+                  <div class="col-lg-12">
+                    <button class="btn btn-sm pull-right" ng-click="removeEnv(e)"><span class="text-danger">x</span></button>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <h4>URL: {{e.url}}</h4>
+                        <p>Tenant ID: {{e.tid}}</p>
+                        <p>User Name: {{e.uname}}</p>
+                        <div class="form-group">
+                          <label>Apprenda Cloud</label>
+                          <input class="form-control" type="text" ng-model="e.appcloud" required>
+                        </div>
+                        <h4>Apprenda Tenants</h4>
+                        <div class="input-group">
+                          <select class="form-control" ng-model="selectedApptenant" ng-options="t for t in freeTenants"></select>
+                                <span class="input-group-btn">
+                                  <button class="btn btn-default" ng-click="addAppTenant(e, selectedApptenant)" type="button"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                </span>
+                        </div>
+                        <div class="row" ng-repeat="t in e.apptenants">
+                          <div class="col-lg-6 row-apptenant">
+                            <p>{{t}}</p>
+                          </div>
+                          <div class="col-lg-02">
+                            <button class="btn btn-sm" ng-click="removeAppTenant(e, t)"><span class="text-danger">x</span></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <h4>Preferences</h4>
+                      <p>Autoscaler will use these settings when VMs are created</p>
+                      <div class="col-lg-12">
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <div class="row">
+                              <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label>Windows Image</label>
+                                  <select class="form-control" ng-model="e.imageidwin" ng-options="i.id as i.name for i in envmeta[e.tid].images"></select>
+                                </div>
+                                <div class="form-group">
+                                  <label>Windows Flavor</label>
+                                  <select class="form-control" ng-model="e.flavoridwin" ng-change="onnewwinflavor(e)" ng-options="f.id as f.name for f in envmeta[e.tid].flavors"></select>
+                                </div>
+                                <div class="form-group">
+                                  <label>Windows CPU</label>
+                                  <p>{{e.wincpu}}</p>
+                                </div>
+                                <div class="form-group">
+                                  <label>Windows RAM</label>
+                                  <p>{{e.winram}}</p>
+                                </div>
+                              </div>
+                              <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label>Linux Image</label>
+                                  <select class="form-control" ng-model="e.imageidlin" ng-options="i.id as i.name for i in envmeta[e.tid].images"></select>
+                                </div>
+                                <div class="form-group">
+                                  <label>Init Script URL</label>
+                                  <input class="form-control" ng-model="e.templateUrlLin"/>
+                                </div>
+                                <div class="form-group">
+                                  <label>Subscription User</label>
+                                  <input class="form-control" ng-model="e.repouserlin"/>
+                                </div>
+                                <div class="form-group">
+                                  <label>Subscription Password</label>
+                                  <input class="form-control" ng-model="e.repopasslin"/>
+                                </div>
+                                <div class="form-group">
+                                  <label>Linux Flavor</label>
+                                  <select class="form-control" ng-model="e.flavoridlin" ng-change="onnewlinflavor(e)" ng-options="f.id as f.name for f in envmeta[e.tid].flavors"></select>
+                                </div>
+                                <div class="form-group">
+                                  <label>Linux CPU</label>
+                                  <p>{{e.lincpu}}</p>
+                                </div>
+                                <div class="form-group">
+                                  <label>Linux RAM</label>
+                                  <p>{{e.linram}}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label>Network</label>
+                              <select class="form-control" ng-model="e.networkid" ng-options="n.id as n.name for n in envmeta[e.tid].networks"></select>
+                            </div>
+                            <div class="form-group">
+                              <label>Security Group</label>
+                              <select class="form-control" ng-model="e.secgroup" ng-options="i.name as i.description for i in envmeta[e.tid].secgroups"></select>
+                            </div>
+                            <div class="form-group">
+                              <label>Key Pair</label>
+                              <select class="form-control" ng-model="e.key" ng-options="i.name as i.name for i in envmeta[e.tid].keypairs"></select>
+                            </div>
+                            <div>
+                              <h4>Override security groups for custom properties</h4>
+                              <div class="input-group">
+                                <select class="form-control" ng-model="selectedSecCS" ng-options="cs.tagKey for cs in customfields"></select>
+                                <span class="input-group-btn">
+                                  <button class="btn btn-default" ng-click="addCSMap(e, selectedSecCS)" type="button"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                </span>
+                              </div>
+                              <div ng-if="e.secgroupmaps" class="row section-sm" ng-repeat="g in e.secgroupmaps">
+                                <div class="form-group col-lg-5">
+                                  <label>Custom property</label>
+                                  <input class="form-control" type="text" ng-model="g.name" required>
+                                </div>
+                                <div class="form-group col-lg-5">
+                                  <label>Sec Group</label>
+                                  <select class="form-control" ng-model="g.secgroup" ng-options="i.name as i.description for i in envmeta[e.tid].secgroups"></select>
+                                </div>
+                                <div class="col-lg-1 col-lg-offset-1">
+                                  <button class="btn btn-sm" ng-click="removeSecGroup(g, e)"><span class="text-danger">x</span></button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <h3>Domain Info</h3>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Domain Name (without extension)<input class="form-control" type="text" ng-model="domainObj.name"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Domain suffix (e.g. com, local, etc.)<input class="form-control" type="text" ng-model="domainObj.suf"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Domain Controller IP<input class="form-control" type="text" ng-model="domainObj.dcip"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Domain Server Name (e.g. paas-dc)<input class="form-control" type="text" ng-model="domainObj.dcname"></label>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Domain user or admin. Must have rights to add/remove DNS records<input class="form-control" type="text" ng-model="domainObj.admin"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Domain user/admin password<input class="form-control" type="password" ng-model="domainObj.pass"></label>
+                  </div>
+                </div>
+            </div>
+            <div class="row">
+                <h3>Platform Info</h3>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Version</label>
+                    <select class="form-control" ng-model="platformObj.ver" ng-options="v.id as v.name for v in platformVersions" required></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform installer path override. The installer is expected to be on the load manager node under c:\Apprenda\Installer\Apprenda.Wizard.exe</label>
+                    <input class="form-control" type="text" ng-model="platformObj.exepath">
+                  </div>
+                  <div class="form-group">
+                    <label>Name or IP of Apprenda load manager<input class="form-control" type="text" ng-model="platformObj.lmip"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform Admin Account (e.g. apprendaadmin)<input class="form-control" type="text" ng-model="platformObj.admin"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform Admin Account Password<input class="form-control" type="password" ng-model="platformObj.adminpass"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform System Service Account (e.g. apprendaservice)<input class="form-control" type="text" ng-model="platformObj.sys"></label>
+                  </div>
+                </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Platform Repo IP<input class="form-control" type="text" ng-model="platformObj.repo"></label>
+                </div>
+                <div class="form-group">
+                  <label>Apprenda Core DB Instance<input class="form-control" type="text" ng-model="platformObj.dbname"></label>
+                </div>
+                <div class="form-group">
+                  <label>Apprenda Core DB Admin Account<input class="form-control" type="text" ng-model="platformObj.dbadmin"></label>
+                </div>
+                <div class="form-group">
+                  <label>Apprenda Core DB Admin Password<input class="form-control" type="password" ng-model="platformObj.dbadminpass"></label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <h3>Scalability thresholds</h3>
+              <div class="col-lg-12">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <h4>Windows</h4>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Server naming pattern <input class="form-control" type="text" ng-model="stats.win.sname"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row" class="appslider">
+                      <div class="col-lg-6">
+                        <p>Spin up, if remaining capacity drops below %</p>
+                        <div class="appslider">
+                          <rzslider rz-slider-model="sliderWinUp.value"
+                                    rz-slider-options="sliderWinUp.options"></rzslider>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <p>Remove VMs, if remaining capacity exceeds %</p>
+                        <div class="appslider">
+                          <rzslider rz-slider-model="sliderWinDown.value"
+                                    rz-slider-options="sliderWinDown.options"></rzslider>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <h4>Linux</h4>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Server naming pattern <input class="form-control" type="text" ng-model="stats.lin.sname"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <p>Spin up, if remaining capacity drops below %</p>
+                        <div class="appslider">
+                          <rzslider rz-slider-model="sliderLinUp.value"
+                                    rz-slider-options="sliderLinUp.options"></rzslider>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <p>Remove VMs, if remaining capacity exceeds %</p>
+                        <div class="appslider">
+                          <rzslider rz-slider-model="sliderLinDown.value"
+                                    rz-slider-options="sliderLinDown.options"></rzslider>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <h4>Utilization Thresholds for Metadata</h4>
+                  <div class="input-group col-lg-4">
+                    <select class="form-control" ng-model="selectedCS" ng-options="cs.tagKey as cs.tagKey for cs in customfields"></select>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" ng-click="addStatsTag(selectedCS)" type="button"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                    </span>
+                  </div>
+                </div>
+                <div class="row" ng-if="stats.tags">
+                  <div class="col-lg-4 section-tagstats" ng-repeat="t in stats.tags">
+                    <div class="row">
+                      <div class="col-lg-10">
+                        <h4>{{stats.tags[t.tagKey].tagKey}}</h4>
+                      </div>
+                      <div class="col-lg-1">
+                        <button class="btn btn-sm btn-danger" ng-click="removeStatsTag(t.tagKey)" type="button"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label>Server naming pattern </label><input class="form-control" type="text" ng-model="stats.tags[t.tagKey].sname">
+                        </div>
+                        <div class="form-group">
+                          <label>On-demand only </label><input class="form-control" type="checkbox" ng-model="stats.tags[t.tagKey].ondemand">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <p>Applies to</p>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Windows</label><input class="form-control" type="checkbox" ng-model="stats.tags[t.tagKey].win">
+                        </div>
+                      </div>
+                      <div class="col-lg-2">
+                        <div class="form-group">
+                          <label>Linux</label><input class="form-control" type="checkbox" ng-model="stats.tags[t.tagKey].lin">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <p>Spin up, if remaining capacity drops below %</p>
+                        <div class="appslider">
+                          <rzslider rz-slider-model="sliderTagsUp[t.tagKey].value"
+                                    rz-slider-options="sliderTagsUp[t.tagKey].options"></rzslider>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <p>Remove VMs, if remaining capacity exceeds %</p>
+                        <div class="appslider">
+                          <rzslider rz-slider-model="sliderTagsDown[t.tagKey].value"
+                                    rz-slider-options="sliderTagsDown[t.tagKey].options"></rzslider>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-1">
+                <span ng-if="loading" class="text-info">Loading...</span>
+              </div>
+              <div class="col-lg-1 col-lg-offset-11">
+                <p><button type="submit" class="btn btn-lg btn-default" ng-disabled="frmconnect.$invalid">Save <span class="glyphicon glyphicon-save"></span></button></p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

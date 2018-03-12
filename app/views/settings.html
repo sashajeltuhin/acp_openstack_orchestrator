@@ -1,0 +1,81 @@
+<div class="container" ng-controller="settingsctrl">
+  <h3>Orchestrator Settings</h3>
+  <form name="frmconnect" ng-submit="saveSettings()">
+  <div class="row">
+    <div class="auth-block">
+      <h4>Email conf</h4>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label>SMTP Server</label>
+          <input class="form-control" type="text" ng-model="mail.settings.smtp" required>
+        </div>
+        <div class="form-group">
+          <label>Port</label>
+          <input class="form-control" type="text" ng-model="mail.settings.smtpport" required>
+        </div>
+        <div class="form-group">
+          <label>From Address</label>
+          <input class="form-control" type="text" ng-model="mail.settings.from" required>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label>SMTP Admin</label>
+          <input class="form-control" type="password" ng-model="mail.settings.emailadmin" required>
+        </div>
+        <div class="form-group">
+          <label>SMTP password</label>
+          <input class="form-control" type="password" ng-model="mail.settings.emailpass" required>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4 col-lg-offset-11">
+      <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="frmconnect.$invalid">Save</button></p>
+    </div>
+  </div>
+  </form>
+
+  <p><button ng-click="listJobs()" class="btn btn-sm btn-info">Jobs...</button></p>
+  <div class="row" ng-show="">
+    <div class="col-lg-7">
+      <h4>Registered jobs</h4>
+      <div class="row">
+        <div class="col-lg-2">
+          <p>Job type</p>
+        </div>
+        <div class="col-lg-2">
+          <p>Time</p>
+        </div>
+        <div class="col-lg-2">
+          <p>Started By</p>
+        </div>
+        <div class="col-lg-2">
+          <p>Status</p>
+        </div>
+        <div class="col-lg-2">
+
+        </div>
+      </div>
+      <div class="row" ng-repeat="j in jobs">
+        <div class="col-lg-2">
+          {{j.type}}
+        </div>
+        <div class="col-lg-2">
+          {{j.start}}
+        </div>
+        <div class="col-lg-2">
+          {{j.uname}}
+        </div>
+        <div class="col-lg-2">
+          {{j.status}}
+        </div>
+        <div class="col-lg-2">
+          Cancel?
+          <p><button ng-click="killjob(j)" class="btn btn-lg btn-warning">Cancel</button></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

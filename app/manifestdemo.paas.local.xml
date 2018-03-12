@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ApprendaGridDefinitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.apprenda.com/ApprendaGridDefinitions" xsi:schemaLocation="http://schemas.apprenda.com/ApprendaGridDefinitions http://apprenda.com/schemas/platform/6.0/ApprendaGridDefinitions.xsd">
+<ApprendaGrid licenseFilePath="c:\builder\temp\demo.paas.local.lic" runtimeDriveLetter = "C" repositoryHost = "test-sql" enforceSslForAllPages = "false" useApprendaHostFileExtension = "false" requireSocAuthorization = "true" pathBasedUrlSubdomain = "apps">
+<CompanyInfo name = "Acme" alias = "acme" address = "123 St" city = "New York" state = "NY" zip = "10001" country = "USA" phoneNumber = "" adminFirstName = "John" adminLastName = "Doe" adminEmail = "Doe@acme.com" />
+<EmailConfig useFreeCloudSolution = "true"/>
+<WindowsServiceConfig >
+<AdminUserAccount >
+<UserAccount domain = "apptest" username = "apprendaadmin" />
+</AdminUserAccount>
+<SystemUserAccount>
+<UserAccount domain = "apptest" username = "apprendasystem" />
+</SystemUserAccount>
+</WindowsServiceConfig>
+<Clouds>
+<Cloud name = "PrivatePaaS" description = "Private cloud" rootUrl = "http://demo.paas.local" cloudType = "Public" infrastructureProvider = "My Datacenter" generateSslCertificate = "true" cachePorts = "6379" cacheSize = "512" cachePassword = "password">
+<Servers>
+<Server hostName = "test-lm">
+<Roles>
+<Role name = "loadManager"/>
+</Roles>
+</Server>
+<Server hostName = "test-win1">
+<Roles >
+<Role name = "web" />
+<Role name = "app" />
+<Role name = "coordination" />
+<Role name = "cache" />
+</Roles >
+</Server >
+<Server hostName = "test-win2">
+<Roles >
+<Role name = "web" />
+<Role name = "app" />
+<Role name = "coordination" />
+<Role name = "cache" />
+</Roles >
+</Server >
+<Server hostName = "test-win3">
+<Roles >
+<Role name = "web" />
+<Role name = "app" />
+<Role name = "coordination" />
+</Roles >
+</Server >
+</Servers>
+<DatabaseServerInstances>
+<DatabaseServerInstance name = "test-sql\sqlexpress" adminUser = "apprendadbadmin" totalMemoryMB = "12270" totalCpuMHz = "27136" totalStorageMB = "10240" coreServer = "true" fqdn = "test-sql.apptest"/>
+</DatabaseServerInstances>
+</Cloud>
+</Clouds >
+</ApprendaGrid >
+</ApprendaGridDefinitions >

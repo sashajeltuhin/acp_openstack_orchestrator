@@ -1,0 +1,70 @@
+<div class="container" ng-controller="installctrl">
+  <div>
+    <h4 class="pull-right"><a href="/install">Back to Topology</a></h4>
+  <h2>User Data for Apprenda Node of type {{serverObj.type}}</h2>
+  <p>To Generate a template, we need to gather data for the fields below. Change them as required or you can leave the defaults and
+    edit the template later</p>
+  </div>
+  <div>
+    <form name="newnode" ng-submit="genTemplate()" novalidate>
+        <div class="row">
+          <div class="col-lg-6">
+            <h3>Domain Info</h3>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Domain Name<input class="form-control" type="text" ng-model="domainObj.name"></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain suffix<input class="form-control" type="text" ng-model="domainObj.suf"></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain Controller IP<input class="form-control" type="text" ng-model="domainObj.dcip"></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain Controller Name<input class="form-control" type="text" ng-model="domainObj.dcname"></label>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label>Admin<input class="form-control" type="text" ng-model="domainObj.admin"></label>
+                </div>
+                <div class="form-group">
+                  <label>Admin password<input class="form-control" type="password" ng-model="domainObj.pass"></label>
+                </div>
+            </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <h3>Platform Info</h3>
+            <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Platform Admin<input class="form-control" type="text" ng-model="platformObj.admin"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform Admin Password<input class="form-control" type="password" ng-model="platformObj.adminpass"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform System<input class="form-control" type="text" ng-model="platformObj.sys"></label>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Platform Base Url<input class="form-control" type="text" ng-model="platformObj.url"></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform Repo IP<input class="form-control" type="text" ng-model="platformObj.repo"></label>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="newnode.$invalid">Show</button></p>
+    </form>
+  </div>
+  <div id="template" ng-if="!!template.str">
+    <h3>Template</h3> <p>If you are creating the instance in Horizon, paste this into the User Data tab of the New Instance Wizard</p>
+    <textarea style="margin: auto;width: 90%" ng-model="template.str" rows="20"></textarea>
+  </div>
+</div>

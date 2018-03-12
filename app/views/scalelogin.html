@@ -1,0 +1,40 @@
+<div class="container" ng-controller="scalectrl">
+  <div class="row">
+    <div class="col-lg-6 col-lg-offset-2">
+      <h2>Scale Apprenda</h2>
+    </div>
+  </div>
+  <div>
+    <div class="row">
+      <form name="frmsignin" ng-submit="signin()">
+        <div class="auth-block col-lg-6 col-lg-offset-2">
+          <h3>Connect to your Apprenda instance</h3>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label>Platform Base Url (no https://)</label>
+                <input class="form-control" type="text" ng-model="platformObj.url" placeholder="apps.mydomain.com" required>
+              </div>
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <label>Admin Email (Email of SOC administrator)</label>
+                    <input class="form-control" type="email" ng-model="adminObj.email" placeholder="socadmin@email.com" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Platform Admin Password (SOC admin password)</label>
+                    <input class="form-control" type="password" ng-model="adminObj.pass" required>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <p><button type="submit" style="margin-top: 50px;margin-left: 20px;" class="btn btn-lg btn-success" ng-disabled="frmsignin.$invalid">Sign In <span class="glyphicon glyphicon-log-in"></span></button></p>
+                  <span style="margin-left: 50px;" ng-if="loading" class="text-info">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

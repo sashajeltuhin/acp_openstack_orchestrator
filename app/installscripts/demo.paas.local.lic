@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<License xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Expiration="2018-12-31T23:51:21.36" IsPerpetual="false">
+  <Limiters>
+    <Limiter Name="TenantCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="TenantUserCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="AppCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="PricebookCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="NodeCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="MemoryLimit" Enabled="true" Maximum="120" Unlimited="true" />
+    <Limiter Name="UnlimitedMemoryForSingleNode" Enabled="false" Maximum="0" Unlimited="false" />
+  </Limiters>
+  <Toggles>
+    <Toggle Name="Extensions" Enabled="true" />
+  </Toggles>
+  <RootDomains>
+    <RootDomain url="demo.paas.local" />
+  </RootDomains>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>chaSkW/yZSeVtPpFKj8iq/q8z7c=</DigestValue></Reference></SignedInfo><SignatureValue>gkhP7EvVQphu1hCTMNgLYes/gE4o+lnRCf8l/ceTWNp+3QFwuz/wNb1bG838S1OmoSbsn47W8E2t2dCVoxenQpvAbOXNMrKSeyUP5lexMLKZv8KJE7c16XfzE93F7PTI5M3geRI/KJ+9BzLmgKvgVBf5w2UvSBzjLr86dAiNnxu+fD16hEiBge6OGGBZ4yC9EPJN1drVRuLK3hU5QvATZMGgvMEhJ4tC1Wh0ikiOBEUertsI1yyc2egJYFzPpqiQKziOwgl1C4VRzR5kmUcZ+AgIqhN1gvO9v7iQGIDpAsdcJe+ynHwhUw1XJL28bpAKRe4k7SvdDXHlS4+Gez4AaQ==</SignatureValue></Signature></License>

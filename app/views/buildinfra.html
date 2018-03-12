@@ -1,0 +1,621 @@
+<div class="container" ng-controller="installctrl">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2">
+    <h2 ng-if="temp.showinstall">Orchestrate Apprenda 6.5.* on Openstack</h2>
+    <h2 ng-if="!temp.showinstall">Prepare Infrastructure for Apprenda 6.5.* on Openstack</h2>
+    </div>
+    <div class="col-lg-2">
+      <h4 class="pull-right"><a href="/install">Back to Topology</a></h4>
+    </div>
+  </div>
+  <div>
+
+    <div class="row ">
+      <div class="row ">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2 auth-block">
+          <form name="frmconnect" ng-submit="initEnv()">
+        <h3>Connect to your environment</h3>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+          <div class="form-group">
+            <label>Openstack URL</label>
+            <input class="form-control input-url" type="text" ng-model="envObj.url" ng-blur="urlChanged()" required>
+          </div>
+          <div class="form-group">
+            <label>Tenant ID:</label>
+            <input class="form-control" type="text" ng-model="envObj.tid" required>
+          </div>
+          <div class="form-group">
+            <label>Compute API version</label>
+            <select class="form-control" ng-model="envObj.compapi" ng-options="i for i in envObj.compapis" required></select>
+          </div>
+          <div class="form-group">
+            <label>Network API version</label>
+            <select class="form-control" ng-model="envObj.netapi" ng-options="i for i in envObj.netapis" required></select>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label>User ID</label>
+                <input class="form-control" type="text" ng-model="envObj.uname" required>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input class="form-control" type="password" ng-model="envObj.upass" required>
+              </div>
+              <div class="form-group">
+                <label>Keystone API version</label>
+                <select class="form-control" ng-model="envObj.authapi" ng-options="i for i in envObj.authapis" required></select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-1 col-md-1 col-sm-1 ">
+              <span ng-if="loading" class="text-info">Loading...</span>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-lg-offset-6 col-md-offset-6 col-dm-offset-6">
+              <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="frmconnect.$invalid">Connect<span class="glyphicon glyphicon-ok"></span></button></p>
+            </div>
+          </div>
+        </div>
+      </form>
+        </div>
+      </div>
+    </div>
+    <div class="infraprogress" ng-if="progress">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+        <h3>The orchestration started</h3> <p>You will be notified via email about the progress.</p>
+          <p ng-if="temp.showinstall">Once the infrastructure is built and prepared for Apprenda, the installer is executed on the
+          Load Manager node. It is located at c:\apprenda\installer\Apprenda.Wizard.exe. In case of an installation error or to review the logs,
+            login to the Load Manager VM using domain credentials specified
+          during configuration and navigate to %appdata%/apprenda/logs/installWizard file to review the installation log.</p>
+          <div class="row">
+            <div class="col-lg-1 col-md-1 col-sm-1">
+              <p><button ng-click="refresh()" class="btn btn-lg btn-success">Status</button></p>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-lg-offset-1 col-md-offset-1 col-dm-offset-1">
+              <p><button ng-click="killjob()" class="btn btn-lg btn-warning">Cancel</button></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-1">
+          <p><button ng-show="showtogle" ng-click="toggleConfig()" class="btn btn-lg btn-success">Config...</button></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-1 col-md-offset-1 col-dm-offset-1">
+          <h4>Job in progress</h4>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+          Status: {{job.status}}
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3" ng-if="job.start">
+          Started: {{job.starttime}}
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3" ng-if="job.life">
+          Duration (sec): {{job.life}}
+        </div>
+      </div>
+      <div class="row core">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-lg-offset-1 col-md-offset-1 col-dm-offset-1 server" ng-if="job.DC.installed">
+          <img class="img-responsive" src="images/ad-server.png">
+          <h4>Domain Controller</h4>
+          Built in (sec): {{job.DC.life}}
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-lg-offset-1 col-md-offset-1 col-dm-offset-1 server" ng-if="job.LM.installed">
+          <img class="img-responsive" src="images/web-server.png">
+          <h4>Load Manager</h4>
+          Built in (sec): {{job.LM.life}}
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-lg-offset-1 col-md-offset-1 col-dm-offset-1 server" ng-if="job.SQL.installed">
+          <img class="img-responsive" src="images/db-server.png">
+          <h4>SQL + Repo</h4>
+          Built in (sec): {{job.SQL.life}}
+        </div>
+      </div>
+      <div class="row windows" ng-if="job.WINNODES">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-lg-offset-1 col-md-offset-1 col-dm-offset-1 server" ng-repeat="win in job.WINNODES" ng-if="win.installed">
+          <img class="img-responsive" src="images/win-server.png">
+          <h4>{{win.name}}</h4>
+          Built in (sec): {{win.life}}
+        </div>
+      </div>
+      <div class="row linux" ng-if="job.LINNODES">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-lg-offset-1 col-md-offset-1 col-dm-offset-1 server" ng-repeat="lin in job.LINNODES" ng-if="lin.installed">
+          <img class="img-responsive" src="images/win-server.png">
+          <h4>{{lin.name}}</h4>
+          Built in (sec): {{lin.life}}
+        </div>
+      </div>
+    </div>
+    <div class="row" ng-if="!!envmeta.envkey && showconfig">
+      <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-2 col-md-offset-2 col-dm-offset-2">
+          <h3>Configuration Settings</h3>
+        </div>
+        <div class="col-lg-1">
+          <button class="btn btn-sm btn-default" style="margin-top: 10px" ng-click="setdefaults()">Defaults</span></button>
+        </div>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12">
+    <form name="newnode" ng-submit="buildInfra()" novalidate>
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1 col-md-1 col-sm-1">
+                <span ng-class="{'section-done': isObjValid('domainObj'), 'section-empty': !isObjValid('domainObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9 col-md-9 col-sm-9">
+                <p>Apprenda nodes must be attached to a Windows domain or domain forest.</p>
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#domain">AD Domain</div>
+              </div>
+            </div>
+          </div>
+          <div id="domain" class="collapse auth-block">
+            <h3>Domain Info</h3>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label>Domain Name<input class="form-control" type="text" ng-model="domainObj.name" required></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain suffix<input class="form-control" type="text" ng-model="domainObj.suf" required></label>
+                </div>
+                <div class="form-group">
+                  <label>Domain Controller IP<input class="form-control" type="text" ng-model="domainObj.dcip"></label>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label>Admin<input class="form-control" type="text" ng-model="domainObj.admin" required></label>
+                </div>
+                <div class="form-group">
+                  <label>Admin password<input class="form-control" type="password" ng-model="domainObj.pass" required></label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class=" server-block">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="form-group">
+                    <label>Domain Server Name<input class="form-control" type="text" ng-model="dcObj.name" required></label>
+                  </div>
+                  <div class="form-group">
+                    <label>Security Group</label>
+                    <select class="form-control" ng-model="dcObj.secgroup" ng-options="i.name as i.name for i in envmeta.secgroups" required></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Network</label>
+                    <select class="form-control" ng-model="dcObj.networkid" ng-options="n.id as n.name for n in envmeta.networks" required></select>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="form-group">
+                    <label>Image</label>
+                    <select class="form-control" ng-model="dcObj.imageid" ng-options="i.id as i.name for i in envmeta.images" required></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Flavor</label>
+                    <select class="form-control" ng-model="dcObj.flavorid" ng-options="f.id as f.name for f in envmeta.flavors" required></select>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                      <label>Volume</label>
+                      <input class="form-control" type="checkbox" ng-model="dcObj.volume">
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 form-group" ng-show="dcObj.volume">
+                      <label>Size (G)</label>
+                      <input class="form-control" type="text" ng-model="dcObj.volumeSize">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+      <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+        <div class="section-header">
+          <div class="row">
+            <div class="col-lg-1 col-md-1 col-sm-1">
+              <span ng-class="{'section-done': isObjValid('platformObj'), 'section-empty': !isObjValid('platformObj')}" class="glyphicon glyphicon-check"></span>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+              <p>The platform configuration section. The platform will consist of 1 Apprenda Cloud with the default name <b>PrivatePaaS</b></p>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2">
+              <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#platform">Platform Info</div>
+            </div>
+          </div>
+        </div>
+        <div id="platform" class="collapse auth-block">
+            <h3>Platform Info</h3>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label>Version</label>
+                  <select class="form-control" ng-model="platformObj.ver" ng-options="v.id as v.name for v in platformVersions" required></select>
+                </div>
+                <div class="form-group">
+                  <label>Platform Admin Service<input class="form-control" type="text" ng-model="platformObj.admin"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Admin Password<input class="form-control" type="password" ng-model="platformObj.adminpass"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform System Service<input class="form-control" type="text" ng-model="platformObj.sys"></label>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label>Platform Base Url<input class="form-control" type="text" ng-model="platformObj.url"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Base Url Subdomain<input class="form-control" type="text" ng-model="platformObj.basesub"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform First Cloud<input class="form-control" type="text" ng-model="platformObj.appcloud"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Repo IP<input class="form-control" type="text" ng-model="platformObj.repo"></label>
+                </div>
+                <div class="form-group">
+                  <label>License File<input class="form-control" type="text" ng-model="platformObj.lic"></label>
+                  <button class="btn btn-sm btn-default" type="file" ngf-select="uploadLic($file)">Upload...</button>
+                  <p>If left blank, the default license for <b>demo.paas.local</b> will be used</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <h4>Admin user</h4>
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label>Admin email<input class="form-control" type="email" ng-model="adminObj.email"></label>
+                </div>
+                <div class="form-group">
+                  <label>Platform Admin Password<input class="form-control" type="password" ng-model="adminObj.pass" required></label>
+                </div>
+                <div class="form-group">
+                  <label>First Name<input class="form-control" type="text" ng-model="adminObj.fname"></label>
+                </div>
+                <div class="form-group">
+                  <label>Last Name<input class="form-control" type="text" ng-model="adminObj.lname"></label>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label>Company Name<input class="form-control" type="text" ng-model="adminObj.compname"></label>
+                </div>
+                <div class="form-group">
+                  <label>Company Alias<input class="form-control" type="text" ng-model="adminObj.compalias"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1 col-md-1 col-sm-1">
+                <span ng-class="{'section-done': isObjValid('lmObj'), 'section-empty': !isObjValid('lmObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9 col-md-9 col-sm-9">
+                <p>Core Components. Load manager configuration</p>
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#lm">Load Manager</div>
+              </div>
+            </div>
+          </div>
+          <div id="lm" class="collapse auth-block">
+          <h3>Load Manager</h3>
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="lmObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <select class="form-control" ng-model="lmObj.secgroup" ng-options="i.name as i.name for i in envmeta.secgroups"></select>
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <select class="form-control" ng-model="lmObj.networkid" ng-options="n.id as n.name for n in envmeta.networks"></select>
+              </div>
+              <div class="form-group">
+                <label>External IP</label>
+                <select class="form-control" ng-model="lmObj.externalIP" ng-options="n.ip as n.ip for n in envmeta.floaters"></select>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Image</label>
+                <select class="form-control" ng-model="lmObj.imageid" ng-options="i.id as i.name for i in envmeta.images"></select>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                  <label>Volume</label>
+                  <input class="form-control" type="checkbox" ng-model="lmObj.volume">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group" ng-show="lmObj.volume">
+                  <label>Size (G)</label>
+                  <input class="form-control" type="text" ng-model="lmObj.volumeSize">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <select class="form-control" ng-model="lmObj.flavorid" ng-options="f.id as f.name for f in envmeta.flavors"></select>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1 col-md-1 col-sm-1">
+                <span ng-class="{'section-done': isObjValid('sqlObj'), 'section-empty': !isObjValid('sqlObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9 col-md-9 col-sm-9">
+                <p>Core Components. SQL Server configuration</p>
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#sql">SQL Server</div>
+              </div>
+            </div>
+          </div>
+          <div id="sql" class="collapse auth-block">
+          <h3>SQL Node</h3>
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="sqlObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Instance Name<input class="form-control" type="text" ng-model="sqlObj.instance"></label>
+              </div>
+              <div class="form-group">
+                <label>Apprenda Core DB Admin Account<input class="form-control" type="text" ng-model="platformObj.dbadmin"></label>
+              </div>
+              <div class="form-group">
+                <label>Apprenda Core DB Admin Password<input class="form-control" type="password" ng-model="platformObj.dbadminpass"></label>
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <select class="form-control" ng-model="sqlObj.networkid" ng-options="n.id as n.name for n in envmeta.networks"></select>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <select class="form-control" ng-model="sqlObj.secgroup" ng-options="i.name as i.name for i in envmeta.secgroups"></select>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Image</label>
+                <select class="form-control" ng-model="sqlObj.imageid" ng-options="i.id as i.name for i in envmeta.images"></select>
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <select class="form-control" ng-model="sqlObj.flavorid" ng-options="f.id as f.name for f in envmeta.flavors"></select>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                  <label>Volume</label>
+                  <input class="form-control" type="checkbox" ng-model="sqlObj.volume">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group" ng-show="sqlObj.volume">
+                  <label>Size (G)</label>
+                  <input class="form-control" type="text" ng-model="sqlObj.volumeSize">
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1 col-md-1 col-sm-1">
+                <span ng-class="{'section-done': isObjValid('winObj'), 'section-empty': !isObjValid('winObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9 col-md-9 col-sm-9">
+                <p>Resource Pool Components. Windows Server configuration</p>
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#win">Windows</div>
+              </div>
+            </div>
+          </div>
+          <div id="win" class="collapse auth-block">
+          <h3>Windows Node</h3>
+          <div class="form-group">
+            <label>How many?</label>
+            <input class="form-control" ng-model="temp.winnum" type="number" min="3" tip text="Min of 3 servers are required">
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="winObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <select class="form-control" ng-model="winObj.secgroup" ng-options="i.name as i.name for i in envmeta.secgroups"></select>
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <select class="form-control" ng-model="winObj.networkid" ng-options="n.id as n.name for n in envmeta.networks"></select>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Image</label>
+                <select class="form-control" ng-model="winObj.imageid" ng-options="i.id as i.name for i in envmeta.images"></select>
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <select class="form-control" ng-model="winObj.flavorid" ng-options="f.id as f.name for f in envmeta.flavors"></select>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                  <label>Volume</label>
+                  <input class="form-control" type="checkbox" ng-model="winObj.volume">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group" ng-show="winObj.volume">
+                  <label>Size (G)</label>
+                  <input class="form-control" type="text" ng-model="winObj.volumeSize">
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-lg-offset-2 col-md-offset-2 col-sm-offset-2">
+          <div class="section-header">
+            <div class="row">
+              <div class="col-lg-1 col-md-1 col-sm-1">
+                <span ng-class="{'section-done': isObjValid('linObj'), 'section-empty': !isObjValid('linObj')}" class="glyphicon glyphicon-check"></span>
+              </div>
+              <div class="col-lg-9 col-md-9 col-sm-9">
+                <p>Resource Pool Components. Linux Server configuration</p>
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="auth-block sectionbtn" data-toggle="collapse" data-target="#lin">Linux</div>
+              </div>
+            </div>
+          </div>
+          <div id="lin" class="collapse auth-block">
+          <h3>Linux Node</h3>
+          <div class="form-group">
+            <label>How many?</label>
+            <input class="form-control" ng-model="temp.linnum" type="number">
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="linObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Security Group</label>
+                <select class="form-control" ng-model="linObj.secgroup" ng-options="i.name as i.name for i in envmeta.secgroups"></select>
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <select class="form-control" ng-model="linObj.networkid" ng-options="n.id as n.name for n in envmeta.networks"></select>
+              </div>
+              <div class="form-group">
+                <label>Key Pair</label>
+                <select class="form-control" ng-model="linObj.key" ng-options="i.name as i.name for i in envmeta.keypairs"></select>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="form-group">
+                <label>Image</label>
+                <select class="form-control" ng-model="linObj.imageid" ng-options="i.id as i.name for i in envmeta.images"></select>
+              </div>
+              <div class="form-group">
+                <label>Init Script URL</label>
+                <input class="form-control" ng-model="linObj.templateUrl"/>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                  <label>Volume</label>
+                  <input class="form-control" type="checkbox" ng-model="linObj.volume">
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 form-group" ng-show="linObj.volume">
+                  <label>Size (G)</label>
+                  <input class="form-control" type="text" ng-model="linObj.volumeSize">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <select class="form-control" ng-model="linObj.flavorid" ng-options="f.id as f.name for f in envmeta.flavors"></select>
+              </div>
+              <div class="form-group">
+                <label>Subscription User</label>
+                <input class="form-control" ng-model="linObj.repouser"/>
+              </div>
+              <div class="form-group">
+                <label>Subscription Password</label>
+                <input class="form-control" ng-model="linObj.repopass"/>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 10px">
+        <div class="col-lg-4 col-lg-offset-2">
+          <div class="form-group" ng-if="envmeta.emailsetup">
+            <label>Notify me when the infrastructure is built<input class="form-control" type="email" ng-model="temp.notifyemail" placeholder="myemail@mycomp.com"></label>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group">
+            <label>Install platform<input class="form-control" type="checkbox" ng-model="temp.install"></label>
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="newnode.$invalid">Build</button></p>
+        </div>
+      </div>
+      <div ng-if="jobrunning">
+        <div class="row">
+          <div class="col-lg-7">
+            <h4>Cannot start orchestration. Job is already in progress</h4>
+            <div class="row">
+              <div class="col-lg-2">
+                <p>Job type</p>
+              </div>
+              <div class="col-lg-2">
+                <p>Time</p>
+              </div>
+              <div class="col-lg-2">
+                <p>Started By</p>
+              </div>
+              <div class="col-lg-2">
+                <p>Status</p>
+              </div>
+              <div class="col-lg-2">
+
+              </div>
+            </div>
+            <div class="row" ng-repeat="j in runningjobs">
+              <div class="col-lg-2">
+                {{j.type}}
+              </div>
+              <div class="col-lg-2">
+                {{j.starttime}}
+              </div>
+              <div class="col-lg-2">
+                {{j.uname}}
+              </div>
+              <div class="col-lg-2">
+                {{j.status}}
+              </div>
+              <div class="col-lg-2">
+                Cancel?
+                <p><button ng-click="killjob(j)" class="btn btn-lg btn-warning">Cancel</button></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+      </div>
+    </div>
+  </div>
+</div>

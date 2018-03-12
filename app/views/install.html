@@ -1,0 +1,93 @@
+<div class="container" ng-controller="installctrl">
+  <h2>Installing the platform on Openstack</h2>
+  <div id="topology">
+    <h3>Lab Topology</h3>
+    <p>The configuration below is a basic multi-node instance of Apprenda.
+      It allows to demonstrate all features of the platform and to get comfortable with major tools. </p>
+    <p>You can use the topology diagram below to view user data templates associated with each node and to orchestrate individual VMs
+    with Apprenda services installed</p>
+    <div class="topo">
+      <div class="row core">
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/dc"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/dc" tip text="Build Apprenda DC Node"><img class="img-responsive" src="images/ad-server.png"></a>
+          <h4>Domain Controller</h4>
+        </div>
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/lm"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/lm" tip text="Build Apprenda Load Manager Node"><img class="img-responsive" src="images/web-server.png"></a>
+          <h4>Load Manager</h4>
+        </div>
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/sql"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/sql" tip text="Build Apprenda DB & Repo Node"><img class="img-responsive" src="images/db-server.png"></a>
+          <h4>SQL + Repo</h4>
+        </div>
+      </div>
+      <div class="row windows">
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/win"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/win" tip text="Build Apprenda Windows Node"><img class="img-responsive" src="images/win-server.png"></a>
+          <h4>Web & App Server 1</h4>
+        </div>
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/win"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/win" tip text="Build Apprenda Windows Node"><img class="img-responsive" src="images/win-server.png"></a>
+          <h4>Web & App Server 2</h4>
+        </div>
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/win"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/win" tip text="Build Apprenda Windows Node"><img class="img-responsive" src="images/win-server.png"></a>
+          <h4>Web & App Server 3</h4>
+        </div>
+      </div>
+      <div class="row linux">
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/lin"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/lin" tip text="Build Apprenda Linux Node"><img class="img-responsive" src="images/linux-server.png"></a>
+          <h4>Linux Server 1</h4>
+        </div>
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/lin"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/lin" tip text="Build Apprenda Linux Node"><img class="img-responsive" src="images/linux-server.png"></a>
+          <h4>Linux Server 2</h4>
+        </div>
+        <div class="col-lg-3 col-lg-offset-1 server">
+          <div class="pull-right" tip text="Template"><a href="/template/lin"><span class="glyphicon glyphicon-file template"></span></a></div>
+          <a href="/buildvm/lin" tip text="Build Apprenda Linux Node"><img class="img-responsive" src="images/linux-server.png"></a>
+          <h4>Linux Server 3</h4>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div id="prereq">
+    <h3>Installation Prerequisites</h3>
+    <ol>
+      <li>Set up Openstack per this <a href="https://northcloudblogs.wordpress.com/apprenda-re-reqs-for-metapod/">documentation</a></li>
+      <li><p>Get Windows Server 2012R2 image for Openstack from Cloudbase. There are following options:</p>
+        <ol>
+          <li>QCOW2: <a href="https://cloudbase.it/euladownload.php?h=kvm">From Cloudbase.it</a></li>
+          <li>QCOW2: <a href="/installers/windows_server_2012_r2_standard_eval_kvm_20140607.img">From us</a></li>
+          <li>RAW: <a href="/installers/windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz">In case you use Ceph. QCOW2 and Ceph storage don't go together</a></li>
+        </ol>
+      </li>
+      <li>
+        <p>Set up security group called 'apprenda' as follows: Allow all VMs to communicate with each other over TCP, UDP and ICMP. Open up ports 80, 443, 22 and 8389.</p>
+        <p>Example configuration:</p>
+        <div class="img-example">
+          <img class="img-responsive" src="images/security-group.png" alt="example security group">
+        </div>
+      </li>
+      <li>
+        <p>Perform installation. Because we are in the lab environment, there are multiple options to go about installation</p>
+        <ol>
+            <li><h3>Manual Install.</h3> (Most educational): We provide user data for each VM and you create VMs with it. Once all VMs are up, you run the install wizard. Use the <a href="/install#topology">Topolgy diagram</a> at the top of this page to build Apprenda VMs</li>
+            <li><h3>Semi-automated.</h3> You provide parameters and the <a href="/buildinfra">Infrastructure Orchestrator</a> will create all the necessary VMs for you. You just run the installer. Alternatively
+            you can use our <a href="/heat">HEAT template builder</a> to build the infrastructure and then run the Apprenda installer. <b>COMING SOON</b></li>
+            <li><h3>Fully automated.</h3> You pick parameters and the <a href="/buildinfra/install">Platform Orchestrator</a> does the job for you. This tool is used to enable Apprenda as a turn-key solution in production scenarios</li>
+        </ol>
+      </li>
+    </ol>
+  </div>
+</div>

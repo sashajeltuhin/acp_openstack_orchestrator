@@ -1,0 +1,114 @@
+<div class="container" ng-controller="usectrl">
+  <div id="intro">
+    <h3>Continuous Integration</h3>
+    <p>Continuous Integration (CI) is a widely accepted and extremely efficient underpinning of SDLC. PaaS makes it event better.
+      Apprenda PaaS integrates with the variety of CI tool, e.g. Jenkins and provides a more seamless way of validating application changes.
+      The source code is avaialble on <a href="https://github.com/apprenda/apprenda-jenkins-integration">Github</a>
+    </p>
+
+    <div class="jenk">
+      <!--<div class="row">-->
+        <!--<div class="col-lg-3">-->
+          <!--<img src="images/jenkins.jpg" alt="Jenkins on Apprenda PaaS">-->
+        <!--</div>-->
+        <!--<div class="col-lg-9">-->
+          <!--<h4>Here are several scenarios with Jenkins</h4>-->
+        <!--</div>-->
+      <!--</div>-->
+
+      <div class="downloads">
+        <div class="row">
+          <div class="downloads-item col-lg-4">
+            <a href="installers/apprenda-jenkins.hpi"><img class="img-responsive" src="images/jenkins.jpg">
+              <h4>Apprenda Jenkins Plugin</h4>
+            </a>
+          </div>
+          <div class="col-lg-8">
+          </div>
+        </div>
+        <div class="row bottomseparator">
+          <div class="downloads-item col-lg-4">
+            <a href="installers/apprenda-jenkins-iaas.hpi"><img class="img-responsive" src="images/jenkins.jpg">
+              <h4>Apprenda Jenkins Plugin for IaaS</h4>
+              </a>
+          </div>
+          <div class="col-lg-8">
+            <p>This plugin brings additional efficiencies, like removing app instances deployed earlier for testing purposes and applying deployment tags.
+              It can also be used with Apprenda deployed on Openstack</p>
+          </div>
+        </div>
+      </div>
+      <div class="scenario">
+        <div class="col-lg-10">
+          <p>How to Setup</p>
+          <ol>
+            <li> <b>Install Jenkins</b>
+              <p> Jenkins can be installed as a guest application on Apprenda or off-platform.
+                Below is the guide on how to install Jenkins on the platform.
+                The best option to run Jenkins on the platform is in Docker container.
+                With this options, Jenkins files can be stored in a shared repository, which will ensure that the container will remain stateful.
+              </p>
+              <p>To build your own archive using Jenkins community edition create the following XML deployment manifest.
+                Note, you can control what image will be used to create the container in the DockerImageName block of the XML file.
+              </p>
+              <p>Here is an example Manifest file:
+              </p>
+              <img class="img img-responsive" src="images/JenkinsDeployXML.png" alt="Application deployment manifest for Jenkins">
+                <p>Application archive directory structure matching the Deployment Manifest above will look as follows:</p>
+              <img class="img img-responsive" src="images/dirstruct.png" alt="Application archive directory structure for Jenkins">
+            </li>
+            <li> <b>Configure the plug-in.</b>
+            <li> <b>Install the plug-in.</b>
+              <ol>
+                <li>Download the desired version of the plug-in</li>
+                <li>Navigate to Manage Jenkins - Manage Plug-ins - Advanced</li>
+                <li>Scroll down to Upload Plugin section</li>
+                <li>Choose the .hpi file that you downloaded earlier</li>
+                <li>You may need to restart Jenkins for the plugin to take effect</li>
+              </ol></li>
+            <li> <b>Configure the plug-in.</b>
+              <ol>
+                <li>Navigate to Manage Jenkins - Configure System</li>
+                <li>Scroll down to Apprenda Deployer section</li>
+                <li>Check Bypass SSL</li>
+              </ol></li>
+            <li> <b>Configure build jobs</b>
+              <p>Apprenda deployer is available as a Build step in any Jenkins job. Here is the list of common settings available for both types of the
+              Apprenda deployer</p>
+              <ol>
+                <li>Path and credentials to the Apprenda instance where the app will be deployed</li>
+                <li>Alias of the app to be deployed</li>
+                <li>Name of the application archive (zip or war) that will be deployed to the platform</li>
+                <li>Location of the application archive. It is the path to the file relative to the root of the project</li>
+                <li>Prefix of the version identifier. 'v' by default</li>
+                <li>Target stage of the deployment. Possible options are Sandbox or Published</li>
+              </ol> <br>
+              <p>The advanced version of the deployer has additional parameters:</p>
+              <ol>
+                <li><b>Deployment purpose</b>
+                <ol>
+                  <li><b>None</b> The plug-in will behave as the regular Apprenda Deployer</li>
+                  <li><b>IaaS Capacity Check</b> Only applies when Apprenda instance has autoscaler API installed. Checks the underlying compute capacity and creates VM, if necessary.</li>
+                  <li><b>Integration test</b> Any job where the application is deployed for verification purposes. The deployer will create a new instance of the app with the following naming
+                  convention: appalias + 'test'</li>
+                  <li><b>Promote</b> The deployer will promote the Published version of the application and remove the previously created instance of the app that was deplyed for verification
+                  purposes</li>
+                  <li><b>Promote to IaaS</b> Same as the Promote job, but it will also attempt to remove the VMs used to support earlier stages of the pipeline, if they are no
+                  longer needed.</li>
+                </ol></li>
+                <li>Access by subdomain. By default, the deployed app will be accessed by path, e.g. https://platformurl/appalias.
+                  If this box is checked, the app will be accessed by subdomain as in https://appalias.platformurl</li>
+                <li>Deployment Tag allows to specify a custom tag and its value for labeling the application for deployment purposes. The format is: customproperty:value</li>
+                <li>API Url. URL to the autoscaler APIs that governs creation and removal of the underlying infrastructure for the purposes of CI. Only applies to IaaS scenarios</li>
+                <li>Next Job Name. Name of the Jenkins job that will be invoked by Apprenda API remotely after the IaaS capacity is verified. Only applies to IaaS scenarios, <i>IaaS Capacity Check</i> Deployment purpose</li>
+                <li>Next Job Token. Token of the Jenkins job that will be invoked by Apprenda API remotely after the IaaS capacity is verified. Only applies to IaaS scenarios,  <i>IaaS Capacity Check</i> Deployment purpose</li>
+                <li>Operating System. Specifies whether the app needs to be installed on Windows or Linux resource pool. Only applies to IaaS scenarios</li>
+                <li>Cleanup Tag can be specified to indicate which VMs can be removed, if idle, following the promotion of apps upstream. Typically, it will be the same tag used in the <i>Integration Test</i> deployment phase. The format is: customproperty:value. Only applies to IaaS scenarios</li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,137 @@
+<div class="container" ng-controller="installctrl">
+  <div>
+    <h4 class="pull-right"><a href="/install">Back to Topology</a></h4>
+    <h2>Build Apprenda Node of type {{serverObj.type}}</h2>
+    <p>Fill out the required fields below</p>
+  </div>
+  <div>
+
+    <div class="row connect">
+      <form name="frmconnect" ng-submit="initEnv()">
+      <h3>Connect to your environment</h3>
+      <div class="col-lg-6">
+      <div class="form-group">
+        <label>Openstack URL</label>
+        <input class="form-control input-url" type="text" ng-model="envObj.url" required>
+      </div>
+      <div class="form-group">
+        <label>Tenant ID:</label>
+        <input class="form-control" type="text" ng-model="envObj.tid" required>
+      </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label>User ID:<input class="form-control" type="text" ng-model="envObj.uname" required></label>
+        </div>
+        <div class="form-group">
+          <label>Password:<input class="form-control" type="password" ng-model="envObj.upass" required></label>
+        </div>
+      </div>
+        <div class="row">
+          <div class="col-lg-1">
+            <span ng-if="loading" class="text-info">Loading...</span>
+          </div>
+          <div class="col-lg-1 col-lg-offset-6">
+            <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="frmconnect.$invalid">Connect<span class="glyphicon glyphicon-ok"></span></button></p>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row" ng-if="!!envmeta.envkey">
+      <h3>Configure node</h3>
+      <div class="col-lg-12">
+    <form name="newnode" ng-submit="buildVM()" novalidate>
+      <div class="row">
+        <div class="col-lg-6">
+          <h3>Server info</h3>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Server Name<input class="form-control" type="text" ng-model="serverObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Secrity Group<input class="form-control" type="text" ng-model="serverObj.secgroup"></label>
+              </div>
+              <div class="form-group">
+                <label>Server Key<input class="form-control" type="text" ng-model="serverObj.key"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Image</label>
+                <select class="form-control" ng-model="serverObj.imageid" ng-options="i.id as i.name for i in envmeta.images"></select>
+              </div>
+              <div class="form-group">
+                <label>Flavor</label>
+                <select class="form-control" ng-model="serverObj.flavorid" ng-options="f.id as f.name for f in envmeta.flavors"></select>
+              </div>
+              <div class="form-group">
+                <label>Network</label>
+                <select class="form-control" ng-model="serverObj.networkid" ng-options="n.id as n.name for n in envmeta.networks"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <h3>Domain Info</h3>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Domain Name<input class="form-control" type="text" ng-model="domainObj.name"></label>
+              </div>
+              <div class="form-group">
+                <label>Domain suffix<input class="form-control" type="text" ng-model="domainObj.suf"></label>
+              </div>
+              <div class="form-group">
+                <label>Domain Controller IP<input class="form-control" type="text" ng-model="domainObj.dcip"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Domain Server Name<input class="form-control" type="text" ng-model="domainObj.dcname"></label>
+              </div>
+              <div class="form-group">
+                <label>Admin<input class="form-control" type="text" ng-model="domainObj.admin"></label>
+              </div>
+              <div class="form-group">
+                <label>Admin password<input class="form-control" type="password" ng-model="domainObj.pass"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h3>Platform Info</h3>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Platform Admin<input class="form-control" type="text" ng-model="platformObj.admin"></label>
+              </div>
+              <div class="form-group">
+                <label>Platform Admin Password<input class="form-control" type="password" ng-model="platformObj.adminpass"></label>
+              </div>
+              <div class="form-group">
+                <label>Platform System<input class="form-control" type="text" ng-model="platformObj.sys"></label>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Platform Base Url<input class="form-control" type="text" ng-model="platformObj.url"></label>
+              </div>
+              <div class="form-group">
+                <label>Platform Repo IP<input class="form-control" type="text" ng-model="platformObj.repo"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notify me when the VM is ready<input class="form-control" type="email" ng-model="job.notifyemail"></label>
+      </div>
+      <p><button type="submit" class="btn btn-lg btn-success" ng-disabled="newnode.$invalid">Build</button></p>
+    </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Apprenda on IaaS in a Lab</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css"  href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="/bower_components/toastr/toastr.min.css">
+    <link rel="stylesheet" type="text/css" href="/bower_components/angularjs-slider/dist/rzslider.css"/>
+    <link rel="stylesheet" type="text/css" href="/styles/main.css">
+    <!--<link rel="stylesheet" type="text/css" href="/bower_components/angular-chart.js/dist/angular-chart.min.css">-->
+    <!-- endbuild -->
+    <base href="/">
+  </head>
+  <body ng-app="openapp">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="header">
+      <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <ul class="nav navbar-nav">
+              <li>
+                <a href="/"><img style="max-height: 60px" class="img-responsive" src="images/apprendalogo.png" alt="Welcome to Apprenda on IaaS"></a>
+              </li>
+              <li><h1 class="text-info" style="margin:20px 20px">PaaS on IaaS in a Lab</h1></li>
+            </ul>
+
+          </div>
+          <div class="collapse navbar-collapse" id="js-navbar-collapse">
+            <ul class="nav navbar-nav pull-right">
+              <li><a href="/install">Installation</a></li>
+              <li><a href="/scale">Scale</a></li>
+              <li><a href="/use">Use</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div ng-view></div>
+    </div>
+
+    <div class="footer">
+      <div class="container">
+        <p class="text-center"><span class="glyphicon glyphicon-cloud"></span> Apprenda PaaS Team</p>
+      </div>
+    </div>
+
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <script src="bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="bower_components/bootstrap/js/tooltip.js" type="text/javascript"></script>
+    <script src="bower_components/angular/angular.min.js" type="text/javascript"></script>
+    <script src="bower_components/angular-route/angular-route.min.js" type="text/javascript"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.min.js" type="text/javascript"></script>
+    <script src="bower_components/toastr/toastr.min.js" type="text/javascript"></script>
+    <script src="bower_components/ng-file-upload-shim/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
+    <script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+    <script src="scripts/socket.io.js" type="text/javascript"></script>
+    <script src="scripts/dir/Chart.js"></script>
+    <script src="scripts/dir/angular-chart.js"></script>
+    <script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js" type="text/javascript"></script>
+    <script src="scripts/dir/ui.js" type="text/javascript"></script>
+    <script src="scripts/services/stackservice.js" type="text/javascript"></script>
+    <script src="scripts/services/messageservice.js" type="text/javascript"></script>
+    <script src="scripts/services/socketservice.js" type="text/javascript"></script>
+    <script src="scripts/controllers/main.js" type="text/javascript"></script>
+    <script src="scripts/controllers/installctrl.js" type="text/javascript"></script>
+    <script src="scripts/controllers/heatctrl.js" type="text/javascript"></script>
+    <script src="scripts/controllers/settingsctrl.js" type="text/javascript"></script>
+    <script src="scripts/controllers/scalectrl.js" type="text/javascript"></script>
+    <script src="scripts/controllers/templatectrl.js" type="text/javascript"></script>
+    <script src="scripts/controllers/vmctrl.js" type="text/javascript"></script>
+        <!-- endbuild -->
+</body>
+</html>

@@ -1,0 +1,15 @@
+heat_template_version: 2013-05-23
+description: "Single server template"
+
+resources:
+  service1:
+    type: "OS::Nova::Server"
+    properties:
+      flavor: ^^flavorid^^
+      image: ^^imageid^^
+      key_name:^^key^^
+      user_data:
+        str_replace:
+          template: |
+              ^^userdata^^
+

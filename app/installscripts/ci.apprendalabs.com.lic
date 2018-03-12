@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<License xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Expiration="2017-01-01T05:02:47.297" IsPerpetual="false">
+  <Limiters>
+    <Limiter Name="TenantCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="TenantUserCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="AppCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="PricebookCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="NodeCount" Enabled="true" Maximum="0" Unlimited="true" />
+    <Limiter Name="MemoryLimit" Enabled="true" Maximum="120" Unlimited="false" />
+    <Limiter Name="UnlimitedMemoryForSingleNode" Enabled="false" Maximum="0" Unlimited="false" />
+  </Limiters>
+  <Toggles>
+    <Toggle Name="Extensions" Enabled="true" />
+  </Toggles>
+  <RootDomains>
+    <RootDomain url="ci.apprendalabs.com" />
+  </RootDomains>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>qS/4wT783gvKqMXdAXEXtlCUDnk=</DigestValue></Reference></SignedInfo><SignatureValue>KWRHwek9e1Uogpkp2OXY8RBTSujmQ9a5agSr7ITTJFAWO/w4mZGkdWl7mwQHvGtUK9mRRxG6J3ICsWpsQ9qa8AF6z0oznb5Lb6UkfPRKdR6eMk9IHu2t3GNfQ8lFa/OFh6Gc+od+oWffNKuWJ10adgsyw+p5adaPEEAr5ZAiSJZyqGOUSE0pabAKP8ohoCbXp2YlntKWVXAuZsrX8vr/n9qEEL54JCUGqTIduJmKOjWTjVehh0aDqBo1fxlYK1l1nvOkgahEjk785893zZFlEk8PlVe/u8IVbO7ZNDSZYeVnbg6jRkYwUkrzcSpHJuQW/LEmFNr7vCWDYlZA+aMHJQ==</SignatureValue></Signature></License>

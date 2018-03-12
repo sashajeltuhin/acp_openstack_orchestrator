@@ -1,0 +1,207 @@
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+body {
+  padding: 0;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.footer {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Custom page header */
+.header {
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 10px;
+}
+/* Make the masthead heading the same height as the navigation */
+.header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+  padding-bottom: 19px;
+}
+
+/* Custom page footer */
+.footer {
+  margin-top: 10px;
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
+}
+
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+
+/* Main marketing message and sign up button */
+.landing-block {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #eee;
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.landing-block .btn {
+  font-size: 21px;
+  padding: 14px 24px;
+}
+
+.landing-block img {
+  max-height: 120px;
+  margin: auto;
+}
+
+.server-block {
+  background-color: #eee;
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 3px;
+}
+
+.core-block{
+  background-color: #dff0d8;
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 3px;
+}
+
+.auth-block{
+  margin-top: 15px;
+  background-color: #d9edf7;
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.server{
+  margin-top:5px;
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.server img {
+  max-height: 50px;
+  margin: auto;
+}
+
+.intro{
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.template{
+  font-size: 1.5em
+}
+
+.downloads-item a img{
+  max-height: 25px;
+}
+
+.connect{
+  width: 95%;
+  margin: auto;
+}
+
+.scalenode{
+  border: 3px solid #000;
+  margin-top: 3px;
+  padding-top: 10px;
+  margin-top: 5px;
+  min-height: 200px;
+}
+
+.scalenodeinner{
+  border-bottom: 1px solid #b3d4fc;
+  height: 120px;
+  margin-top: 3px;
+  padding-top: 10px;
+}
+
+.scalenodebtndel{
+  margin-top: -20px;
+  margin-right: -10px;
+}
+
+.bottomseparator{
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.sideseparator{
+  border-right: 1px solid #e5e5e5;
+}
+
+.progressadd{
+  border: 3px solid lightgreen;
+  margin-top: 3px;
+  padding-top: 10px;
+  margin-top: 5px;
+  min-height: 200px;
+}
+
+.progressdel{
+  border: 3px solid orangered;
+  margin-top: 3px;
+  padding-top: 10px;
+  margin-top: 5px;
+  min-height: 200px;
+}
+
+.sectionbtn {
+  width: 100px;height: 60px;border: solid 1px black;
+  cursor: pointer;
+}
+
+.appslider {
+  height:200px;
+}
+
+.section-header{
+  height: 100px;margin-top:5px; border-bottom: 1px solid #d9edf7;
+}
+
+.section-done{
+  color: green;
+  font-size: 2.5em;
+}
+
+.section-empty{
+  font-size: 2em;
+}
+
+.row-apptenant{
+  margin: 5px;
+}
+
+.section-env{
+  border: solid 1px gainsboro;
+  padding: 5px;
+  margin: 7px;
+}
+
+.section-sm
+{
+  border: dotted 1px gainsboro;
+  padding: 2px;
+  margin: 3px;
+}
+
+.section-tagstats{
+  border: dotted 1px gainsboro;
+  padding: 2px;
+  margin: 3px;
+  background-color: lightcyan;
+}

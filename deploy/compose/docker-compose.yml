@@ -1,0 +1,30 @@
+iaasnginx:
+    image: sashaz/nginxcentos7
+    container_name: iaasnginx
+    links:
+        - iaasapi
+    ports:
+        - 80:80
+    volumes:
+        - /Users/ajeltuhin/dev/openstack/configs/nginx.conf:/etc/nginx/nginx.conf
+        - /Users/ajeltuhin/dev/openstack/logs:/logs
+        - /Users/ajeltuhin/dev/openstack:/data/www
+
+iaasapi:
+    image: sashaz/nodecentos7:latest
+    container_name: iaasapi
+    links:
+            - mdb
+    command: node server.js
+    ports:
+        - 8024:8024
+    volumes:
+        - /Users/ajeltuhin/dev/openstack:/data/dev
+
+mdb:
+    image: mongo:2.6.7
+    container_name: mdb
+    ports:
+        - 27017:27017
+    volumes:
+        - /Users/ajeltuhin/dev/openstack/data:/data

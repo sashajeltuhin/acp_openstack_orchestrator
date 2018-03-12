@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<appManifest xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.apprenda.com/DeploymentManifest http://apprenda.com/schemas/platform/6.0/DeploymentManifest.xsd" xmlns="http://schemas.apprenda.com/DeploymentManifest">
+  <applicationServices stickySessions="False" level="Authentication" />
+  <linuxServices>
+    <service name="iaasnginx" throttlingPolicy="Medium">
+      <customProperties>
+        <customProperty name="DockerDeploy">
+          <values>
+            <propertyValue value="Registry" />
+          </values>
+        </customProperty>
+        <customProperty name="DockerImageName">
+          <values>
+            <propertyValue value="sashaz/nginxcentos7" />
+          </values>
+        </customProperty>
+        <customProperty name="DockerBindHost">
+          <values>
+            <propertyValue value="/data/www/orchestrator/configs/nginx.conf:/etc/nginx/nginx.conf" />
+            <propertyValue value="/data/www/orchestrator/logs:/logs" />
+          </values>
+        </customProperty>
+      </customProperties>
+      <ports>
+        <dynamicPort httpMapped="true" portName="HTTP_80" />
+      </ports>
+    </service>
+    <service name="iaasapi" throttlingPolicy="Medium">
+      <customProperties>
+        <customProperty name="DockerDeploy">
+          <values>
+            <propertyValue value="Registry" />
+          </values>
+        </customProperty>
+        <customProperty name="DockerImageName">
+          <values>
+            <propertyValue value="sashaz/nodecentos7" />
+          </values>
+        </customProperty>
+        <customProperty name="DockerBindHost">
+          <values>
+            <propertyValue value="/data/www/orchestrator:/data/dev" />
+          </values>
+        </customProperty>
+      </customProperties>
+      <ports>
+        <dynamicPort httpMapped="false" portName="HTTP_8024" />
+      </ports>
+    </service>
+    <service name="mdb" throttlingPolicy="Medium">
+      <customProperties>
+        <customProperty name="DockerDeploy">
+          <values>
+            <propertyValue value="Registry" />
+          </values>
+        </customProperty>
+        <customProperty name="DockerImageName">
+          <values>
+            <propertyValue value="mongo:2.6.7" />
+          </values>
+        </customProperty>
+        <customProperty name="DockerBindHost">
+          <values>
+            <propertyValue value="/data/www/orchestrator/data:/data" />
+          </values>
+        </customProperty>
+      </customProperties>
+      <ports>
+        <dynamicPort httpMapped="false" portName="HTTP_27017" />
+      </ports>
+    </service>
+  </linuxServices>
+</appManifest>
